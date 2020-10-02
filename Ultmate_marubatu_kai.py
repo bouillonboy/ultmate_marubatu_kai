@@ -117,6 +117,38 @@ def kakikae1_list(zyuu,idx): #エリアをとった時のリスト書き換え�
             elif zyuu == 9:
                 banmen_map[(zyuu-5) * 10 + i] = "x"
 
+def kakikae0_all():
+    global banmen
+    count = 0
+    while count <= 49:
+        for i in range(1,10):
+            for j in range(1,10):
+                banmen =  banmen.replace("x","o")
+                area_name = rule_area[i]
+                if i  in [2,4,6,8]:
+                    banmen =  banmen.replace(area_name + "0", " o")
+                    count += 1
+                else:
+                    banmen =  banmen.replace(area_name + str(j), " o")
+                    count += 9
+    return banmen
+
+def kakikae1_all():
+    global banmen
+    count = 0
+    while count <= 49:
+        for i in range(1,10):
+            for j in range(1,10):
+                banmen =  banmen.replace("o","x")
+                area_name = rule_area[i]
+                if i  in [2,4,6,8]:
+                    banmen =  banmen.replace(area_name + "0", " x")
+                    count += 1
+                else:
+                    banmen =  banmen.replace(area_name + str(j), " x")
+                    count += 9
+    return banmen
+
 
 banmen ="""
 |A1|A2|A3|        |C1|C2|C3|
@@ -205,12 +237,14 @@ def ultmate_marubatu():
                     user0_operations_area[zyuu-1].append(num - (zyuu * 10)) #user0がとったエリアのますのリストに追加
                     if check_decision(user0_operations_area[zyuu-1]) or zyuu == 2 or zyuu == 4 or zyuu == 6 or zyuu == 8: #エリア内で揃ったかの判定
                         user0_operations.append(zyuu) #盤面でのとったマスのリストに追加
+                        if check_decision(user0_operations): #盤面で揃っているかの判定
+                            kakikae0_all() #盤面全部をおんなじ記号にする
+                            print(banmen)
+                            print('VICTORY!!user0の勝ちです!')
+                            break
                         kakikae0(zyuu)  #盤面の書き換え，エリア内を全部おんじ記号にする
                         print(banmen)
                         kakikae0_list(zyuu,idx) #マップのリストもそのエリアにおけないように全部書き換え
-                        if check_decision(user0_operations): #盤面で揃っているかの判定
-                            print('VICTORY!!user0の勝ちです!')
-                            break
                     else: #揃わなかった時
                         banmen_map[idx] = "o" #盤面のリストを書き換える
                         banmen = banmen.replace(str(user0_input)," o") #盤面を書き換える
@@ -243,12 +277,14 @@ def ultmate_marubatu():
                     user1_operations_area[zyuu-1].append(num - (zyuu * 10)) #user0がとったエリアのますのリストに追加
                     if check_decision(user1_operations_area[zyuu-1]) or zyuu == 2 or zyuu == 4 or zyuu == 6 or zyuu == 8: #エリア内で揃ったかの判定
                         user1_operations.append(zyuu) #盤面でのとったマスのリストに追加
+                        if check_decision(user1_operations): #盤面で揃っているかの判定
+                            kakikae1_all()
+                            print(banmen)
+                            print('VICTORY!!user1の勝ちです!')
+                            break
                         kakikae1(zyuu)  #とったエリアを全部おんなじ記号にしたい
                         print(banmen)
                         kakikae1_list(zyuu,idx) #マップのリストもそのエリアにおけないように全部書き換え
-                        if check_decision(user1_operations): #盤面で揃っているかの判定
-                            print('VICTORY!!user1の勝ちです!')
-                            break
                     else: #揃わなかった時
                         banmen_map[idx] = "x" #盤面のリストを書き換える
                         banmen = banmen.replace(str(user1_input)," x") #盤面を書き換える
@@ -266,7 +302,7 @@ def ultmate_marubatu():
                 iti = 0
             next_area_str = rule_area[iti]
             next_area_int = iti
-        if turn_count == 49:
+        if sum(user0_operations)  +  sum(user1_operations) ==  45:
             print('引き分けです')
             break
 
