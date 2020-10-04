@@ -149,6 +149,17 @@ def kakikae1_all():
                     count += 9
     return banmen
 
+def hikiwake(num):
+    global user0_operations
+    global user1_operations
+    global hikiwake_list
+    count = 0
+    for i in range(1,10) :
+        if rule_area[num] + str(i) not in banmen_map:
+            count += 1
+        if count == 9 and (num not in user0_operations) and (num not in user1_operations):
+            hikiwake_list.append(num)
+            break
 
 banmen ="""
 |A1|A2|A3|        |C1|C2|C3|
@@ -184,6 +195,10 @@ banmen_map = ["A1","A2","A3","A4","A5","A6","A7","A8","A9","B0",
             "G1","G2","G3","G4","G5","G6","G7","G8","G9","H0",
             "I1","I2","I3","I4","I5","I6","I7","I8","I9"]
 
+user0_operations = [] #ユーザー0が盤面で見た時に獲得したマス
+user1_operations = []
+hikiwake_list = [] #引き分けしたエリア用のリスト
+
 def ultmate_marubatu():
     rule_message ="""
     アルティメットマルバツゲームのルール
@@ -201,12 +216,13 @@ def ultmate_marubatu():
 
     user0_input = str() #ユーザー0の入力値
     user1_input = str() #ユーザー１の入力値
-    user0_operations = [] #ユーザー0が盤面で見た時に獲得したマス
-    user1_operations = []
     user0_operations_area = [[],[],[],[],[],[],[],[],[]] #ユーザー0の獲得したマス
     user1_operations_area = [[],[],[],[],[],[],[],[],[]] #ユーザー1の獲得したマス
     next_area_int = 5 #次のプレイヤーがおける座標
     next_area_str = rule_area[next_area_int]
+    global user0_operations
+    global user1_operations
+    global hikiwake_list
 
     err_message = "正しい座標を入力してください"
 
@@ -255,10 +271,11 @@ def ultmate_marubatu():
             else: #おけない時
                 print(err_message)
                 continue
+            hikiwake(zyuu) #引き分けエリアのリスト作成
             turn_user = 1
             turn_count += 1
             iti = num - (zyuu * 10)
-            if (iti in user0_operations) or (iti in user1_operations): #next_areaがすでに埋まってる時
+            if (iti in user0_operations) or (iti in user1_operations) or (iti in hikiwake_list): #next_areaがすでに埋まってる時
                 iti = 0 #アルティメットフリーにする
             next_area_str = rule_area[iti]
             next_area_int = iti
@@ -295,14 +312,15 @@ def ultmate_marubatu():
             else: #おけない時
                 print(err_message)
                 continue
+            hikiwake(zyuu) #引き分けエリアのリスト作成
             turn_user = 0
             turn_count += 1
             iti = num - (zyuu * 10)
-            if (iti in user0_operations) or (iti in user1_operations):
+            if (iti in user0_operations) or (iti in user1_operations) or (iti in hikiwake_list):
                 iti = 0
             next_area_str = rule_area[iti]
             next_area_int = iti
-        if sum(user0_operations)  +  sum(user1_operations) ==  45:
+        if sum(user0_operations)  +  sum(user1_operations)  +  sum(hikiwake_list) ==  45:
             print('引き分けです')
             break
 
